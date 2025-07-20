@@ -1,11 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import HealthProgramViewSet, ClientViewSet
+from .views import ClientViewSet, HealthProgramViewSet
 
 router = DefaultRouter()
-router.register(r'programs', HealthProgramViewSet)
 router.register(r'clients', ClientViewSet)
+router.register(r'programs', HealthProgramViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]
