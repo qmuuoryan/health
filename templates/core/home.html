@@ -1,13 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Health System</title>
-</head>
-<body>
-    <h1>Welcome to the Health System</h1>
-    <p><a href="{% url 'register_client' %}">Register New Client</a></p>
-    <p><a href="{% url 'client_list' %}">View All Clients</a></p>
-    <p><a href="/admin/">Admin Panel</a></p>
-    <p><a href="/logout/">Logout</a></p>
-</body>
-</html>
+{% extends 'core/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1 class="mb-4">Health System Dashboard</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Clients</h5>
+                    <p class="card-text fs-3">{{ total_clients }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Health Programs</h5>
+                    <p class="card-text fs-3">{{ total_programs }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Enrollments</h5>
+                    <p class="card-text fs-3">{{ total_enrollments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="list-group">
+        <a href="{% url 'register_client' %}" class="list-group-item list-group-item-action">Register New Client</a>
+        <a href="{% url 'client_list' %}" class="list-group-item list-group-item-action">View All Clients</a>
+        <a href="/admin/" class="list-group-item list-group-item-action">Admin Panel</a>
+    </div>
+{% endblock %}

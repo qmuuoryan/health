@@ -1,7 +1,10 @@
-<h2>Enroll {{ client.name }} in Health Programs</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Enroll</button>
-</form>
-<a href="{% url 'client_list' %}">Back to Client List</a>
+{% extends 'core/base.html' %}
+{% block title %}Enroll Client{% endblock %}
+{% block content %}
+    <h2 class="mb-4">Enroll {{ client.name }} in Health Programs</h2>
+    <form method="post" class="card p-4 shadow-sm bg-white">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Enroll</button>
+    </form>
+{% endblock %}

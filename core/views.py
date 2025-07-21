@@ -8,6 +8,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db.models import Count
+
 
 
 class HealthProgramViewSet(viewsets.ModelViewSet):
@@ -52,7 +55,12 @@ class EnrollmentForm(forms.Form):
 
 @login_required
 def home(request):
-    return render(request, 'core/home.html')
+    context = {
+        'total_clients': Client.objects.count(),
+        'total_programs': HealthProgram.objects.count(),
+        'total_enrollments': Enrollment.objects.count(),
+    }
+    return render(request, 'core/home.html', context)
 
 @login_required
 def register_client(request):
@@ -60,7 +68,10 @@ def register_client(request):
         form = ClientForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Client registered successfully.")
             return redirect('client_list')
+        else:
+            messages.error(request, "Failed to register client. Please correct the form.")
     else:
         form = ClientForm()
     return render(request, 'core/register_client.html', {'form': form})
@@ -78,7 +89,10 @@ def enroll_client(request, client_id):
         if form.is_valid():
             for program in form.cleaned_data['programs']:
                 Enrollment.objects.get_or_create(client=client, program=program)
+            messages.success(request, f"{client.name} successfully enrolled.")
             return redirect('client_list')
+        else:
+            messages.error(request, "Enrollment failed.")
     else:
         form = EnrollmentForm()
     return render(request, 'core/enroll_client.html', {'form': form, 'client': client})

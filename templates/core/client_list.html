@@ -1,12 +1,35 @@
-<h2>Registered Clients</h2>
-<ul>
+{% extends 'core/base.html' %}
+{% block title %}Clients{% endblock %}
+{% block content %}
+    <h2 class="mb-4">Registered Clients</h2>
+    {% if clients %}
+        <ul class="list-group">
+            {% for client in clients %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ client.name }}</strong> ({{ client.gender }}, Age {{ client.age }})
+                    </div>
+                    <a href="{% url 'enroll_client' client.id %}" class="btn btn-sm btn-outline-primary">Enroll</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info">No clients found.</div>
+    {% endif %}
+
     {% for client in clients %}
-        <li>
-            {{ client.name }} — {{ client.gender }} (Age {{ client.age }})<br>
-            <a href="{% url 'enroll_client' client.id %}">Enroll in Programs</a>
-        </li>
-    {% empty %}
-        <li>No clients found.</li>
-    {% endfor %}
-</ul>
-<a href="{% url 'home' %}">Back to Home</a>
+    <li class="list-group-item">
+        <strong>{{ client.name }}</strong> ({{ client.gender }}, Age {{ client.age }})<br>
+        
+        <small>Programs:
+            {% for program in client.programs.all %}
+                <span class="badge bg-secondary">{{ program.name }}</span>
+            {% empty %}
+                <span class="text-muted">Not enrolled</span>
+            {% endfor %}
+        </small><br>
+
+        <a href="{% url 'enroll_client' client.id %}" class="btn btn-sm btn-outline-primary mt-2">Enroll in Programs</a>
+    </li>
+{% endfor %}
+{% endblock %}
