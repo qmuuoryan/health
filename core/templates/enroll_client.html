@@ -1,0 +1,7 @@
+<h2>Enroll {{ client.name }} in Health Programs</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enroll</button>
+</form>
+<a href="{% url 'client_list' %}">Back to Client List</a>

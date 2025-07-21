@@ -1,0 +1,12 @@
+<h2>Registered Clients</h2>
+<ul>
+    {% for client in clients %}
+        <li>
+            {{ client.name }} — {{ client.gender }} (Age {{ client.age }})<br>
+            <a href="{% url 'enroll_client' client.id %}">Enroll in Programs</a>
+        </li>
+    {% empty %}
+        <li>No clients found.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'home' %}">Back to Home</a>
