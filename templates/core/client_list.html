@@ -19,6 +19,8 @@
                         <strong>{{ client.name }}</strong> ({{ client.gender }}, Age {{ client.age }})
                     </div>
                     <a href="{% url 'enroll_client' client.id %}" class="btn btn-sm btn-outline-primary">Enroll</a>
+                    <a href="{% url 'client_profile' client.id %}" class="btn btn-sm btn-outline-info">View Profile</a>
+
                 </li>
             {% endfor %}
         </ul>
