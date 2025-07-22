@@ -1,15 +1,16 @@
+
+
+
+{% extends 'core/base.html' %}
+{% block title %}Clients{% endblock %}
+{% block content %}
 <form method="get" class="mb-4">
     <div class="input-group">
         <input type="text" name="q" value="{{ query }}" placeholder="Search clients..." class="form-control">
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
->
 
-
-{% extends 'core/base.html' %}
-{% block title %}Clients{% endblock %}
-{% block content %}
     <h2 class="mb-4">Registered Clients</h2>
     {% if clients %}
         <ul class="list-group">

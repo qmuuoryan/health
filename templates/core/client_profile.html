@@ -1,20 +1,304 @@
 {% extends 'core/base.html' %}
 {% block title %}{{ client.name }}'s Profile{% endblock %}
 {% block content %}
-<h2>{{ client.name }}</h2>
-<p>Age: {{ client.age }} | Gender: {{ client.get_gender_display }}</p>
-<p>Contact: {{ client.contact_info }}</p>
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        animation: slideInFromTop 0.8s ease-out;
+    }
 
-<h4 class="mt-4">Enrolled Programs</h4>
-<ul class="list-group">
-    {% for enrollment in enrollments %}
-        <li class="list-group-item">
-            {{ enrollment.program.name }} <small class="text-muted">(since {{ enrollment.enrolled_on }})</small>
-        </li>
-    {% empty %}
-        <li class="list-group-item text-muted">No enrolled programs</li>
-    {% endfor %}
-</ul>
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="70" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>');
+        animation: float 20s ease-in-out infinite;
+        pointer-events: none;
+    }
 
-<a href="{% url 'client_list' %}" class="btn btn-link mt-3">Back to Clients</a>
+    @keyframes slideInFromTop {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateX(0px) translateY(0px); }
+        25% { transform: translateX(10px) translateY(-10px); }
+        50% { transform: translateX(-5px) translateY(10px); }
+        75% { transform: translateX(-10px) translateY(-5px); }
+    }
+
+    .client-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-right: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+    }
+
+    .client-info {
+        display: flex;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .client-details h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+
+    .client-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .programs-section {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        animation: slideInFromBottom 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideInFromBottom {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .section-title {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .program-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .program-item {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .program-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+    }
+
+    .program-item:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .program-item:hover::before {
+        transform: scaleY(1);
+    }
+
+    .program-name {
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .program-date {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .back-button {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        animation: slideInFromBottom 0.8s ease-out 0.4s both;
+    }
+
+    .back-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .back-button:active {
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+        .client-info {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .client-avatar {
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+
+        .client-meta {
+            justify-content: center;
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+        }
+
+        .programs-section {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="profile-header">
+    <div class="client-info">
+        <div class="client-avatar">
+            {{ client.name|first|upper }}
+        </div>
+        <div class="client-details">
+            <h2>{{ client.name }}</h2>
+            <div class="client-meta">
+                <div class="meta-item">
+                    <i class="fas fa-birthday-cake"></i>
+                    <span>{{ client.age }} years old</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-venus-mars"></i>
+                    <span>{{ client.get_gender_display }}</span>
+                </div>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-phone"></i>
+                <span>{{ client.contact_info }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="programs-section">
+    <h4 class="section-title">
+        <i class="fas fa-clipboard-list"></i>
+        Enrolled Programs
+    </h4>
+    
+    {% if enrollments %}
+        <ul class="program-list">
+            {% for enrollment in enrollments %}
+                <li class="program-item">
+                    <div class="program-name">{{ enrollment.program.name }}</div>
+                    <div class="program-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Enrolled since {{ enrollment.enrolled_on }}</span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <p>No enrolled programs yet</p>
+            <small>This client hasn't been enrolled in any programs</small>
+        </div>
+    {% endif %}
+</div>
+
+<a href="{% url 'client_list' %}" class="back-button">
+    <i class="fas fa-arrow-left"></i>
+    Back to Clients
+</a>
 {% endblock %}

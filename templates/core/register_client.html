@@ -1,18 +1,360 @@
 {% extends 'core/base.html' %}
 {% block title %}Register Client{% endblock %}
 {% block content %}
-    <h2 class="mb-4">Register New Client</h2>
-    <form method="post" class="card p-4 shadow-sm bg-white">
+<style>
+    .registration-container {
+        max-width: 600px;
+        margin: 0 auto;
+        animation: slideInFromBottom 0.8s ease-out;
+    }
+
+    @keyframes slideInFromBottom {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: slideInFromTop 0.8s ease-out;
+    }
+
+    @keyframes slideInFromTop {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-title {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .registration-form {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        padding: 3rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        animation: slideInFromBottom 0.8s ease-out 0.2s both;
+    }
+
+    .registration-form::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="20" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="90" r="1.2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="0.8" fill="rgba(255,255,255,0.1)"/></svg>');
+        animation: float 15s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateX(0px) translateY(0px) rotate(0deg); }
+        25% { transform: translateX(5px) translateY(-5px) rotate(1deg); }
+        50% { transform: translateX(-3px) translateY(5px) rotate(-1deg); }
+        75% { transform: translateX(-5px) translateY(-3px) rotate(0.5deg); }
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-group label {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control, .form-select {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        color: white;
+        padding: 0.8rem 1.2rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #4facfe;
+        box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+        color: white;
+        outline: none;
+    }
+
+    .form-select option {
+        background: #2c3e50;
+        color: white;
+        padding: 0.5rem;
+    }
+
+    .error-message {
+        color: #ff6b6b;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    .submit-button {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .submit-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .submit-button:hover::before {
+        left: 100%;
+    }
+
+    .submit-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+    }
+
+    .submit-button:active {
+        transform: translateY(-1px);
+    }
+
+    .form-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.5);
+        pointer-events: none;
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+    .floating-label {
+        position: absolute;
+        left: 1.2rem;
+        top: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.3s ease;
+        pointer-events: none;
+        background: transparent;
+        padding: 0 0.3rem;
+        font-size: 1rem;
+    }
+
+    .form-control:focus + .floating-label,
+    .form-control:not(:placeholder-shown) + .floating-label {
+        top: -0.5rem;
+        left: 1rem;
+        font-size: 0.8rem;
+        color: #4facfe;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .registration-form {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+            border-radius: 20px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .form-control, .form-select {
+            padding: 0.7rem 1rem;
+        }
+    }
+
+   
+    .submit-button.loading {
+        pointer-events: none;
+        opacity: 0.8;
+    }
+
+    .submit-button.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 2px solid transparent;
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+</style>
+
+<div class="registration-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fas fa-user-plus me-2"></i>
+            Register New Client
+        </h2>
+        <p class="page-subtitle">Add a new client to the health system</p>
+    </div>
+
+    <form method="post" class="registration-form" id="registrationForm">
         {% csrf_token %}
         {% for field in form %}
-            <div class="mb-3">
-                {{ field.label_tag }}
-                {{ field }}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {% if field.field.required %}
+                        <i class="fas fa-asterisk text-danger" style="font-size: 0.6rem;"></i>
+                    {% endif %}
+                    {{ field.label }}
+                </label>
+                
+                <div class="input-group">
+                    {{ field }}
+                    {% if field.name == 'name' %}
+                        <i class="fas fa-user form-icon"></i>
+                    {% elif field.name == 'age' %}
+                        <i class="fas fa-birthday-cake form-icon"></i>
+                    {% elif field.name == 'gender' %}
+                        <i class="fas fa-venus-mars form-icon"></i>
+                    {% elif field.name == 'contact_info' or field.name == 'phone' or field.name == 'email' %}
+                        <i class="fas fa-phone form-icon"></i>
+                    {% endif %}
+                </div>
+                
                 {% if field.errors %}
-                    <div class="text-danger">{{ field.errors }}</div>
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{ field.errors.0 }}
+                    </div>
                 {% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Register</button>
+        
+        <button type="submit" class="submit-button" id="submitBtn">
+            <i class="fas fa-save me-2"></i>
+            Register Client
+        </button>
     </form>
+</div>
+
+<script>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        
+        form.addEventListener('submit', function() {
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span style="opacity: 0;">Processing...</span>';
+        });
+        
+        
+        const inputs = document.querySelectorAll('.form-control, .form-select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'transform 0.2s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+            
+            // Add validation feedback
+            input.addEventListener('invalid', function() {
+                this.style.borderColor = '#ff6b6b';
+                this.style.boxShadow = '0 0 0 0.2rem rgba(255, 107, 107, 0.25)';
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.validity.valid) {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    this.style.boxShadow = 'none';
+                }
+            });
+        });
+        
+        
+        const firstError = document.querySelector('.error-message');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+</script>
 {% endblock %}
