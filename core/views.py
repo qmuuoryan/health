@@ -78,8 +78,12 @@ def register_client(request):
 
 @login_required
 def client_list(request):
-    clients = Client.objects.all()
-    return render(request, 'core/client_list.html', {'clients': clients})
+    query = request.GET.get('q')
+    if query:
+        clients = Client.objects.filter(name__icontains=query)
+    else:
+        clients = Client.objects.all()
+    return render(request, 'core/client_list.html', {'clients': clients, 'query': query})
 
 @login_required
 def enroll_client(request, client_id):
@@ -96,3 +100,9 @@ def enroll_client(request, client_id):
     else:
         form = EnrollmentForm()
     return render(request, 'core/enroll_client.html', {'form': form, 'client': client})
+
+@login_required
+def client_profile(request, client_id):
+    client = Client.objects.get(id=client_id)
+    enrollments = client.enrollment_set.select_related('program')
+    return render(request, 'core/client_profile.html', {'client': client, 'enrollments': enrollments})
