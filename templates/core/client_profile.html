@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ client.name }}'s Profile{% endblock %}
+{% block content %}
+<h2>{{ client.name }}</h2>
+<p>Age: {{ client.age }} | Gender: {{ client.get_gender_display }}</p>
+<p>Contact: {{ client.contact_info }}</p>
+
+<h4 class="mt-4">Enrolled Programs</h4>
+<ul class="list-group">
+    {% for enrollment in enrollments %}
+        <li class="list-group-item">
+            {{ enrollment.program.name }} <small class="text-muted">(since {{ enrollment.enrolled_on }})</small>
+        </li>
+    {% empty %}
+        <li class="list-group-item text-muted">No enrolled programs</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'client_list' %}" class="btn btn-link mt-3">Back to Clients</a>
+{% endblock %}
